@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'vendedor'
 
-export type LeadSource = 'whatsapp' | 'instagram' | 'facebook' | 'web' | 'referido'
+export type LeadSource = 'whatsapp' | 'instagram' | 'tiktok' | 'facebook' | 'web' | 'referido'
 
 export type ProductInterest =
   | 'roller_screen'
@@ -152,6 +152,7 @@ export const PRODUCT_LABELS: Record<ProductInterest, string> = {
 export const SOURCE_LABELS: Record<LeadSource, string> = {
   whatsapp: 'WhatsApp',
   instagram: 'Instagram',
+  tiktok: 'TikTok',
   facebook: 'Facebook Ads',
   web: 'Sitio Web',
   referido: 'Referido',
