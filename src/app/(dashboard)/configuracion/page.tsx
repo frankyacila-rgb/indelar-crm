@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { User, Building2, Bell, Shield, Users } from 'lucide-react'
+import { User, Building2, Shield, Receipt } from 'lucide-react'
 import { ProfileForm } from '@/components/configuracion/ProfileForm'
 
 export default async function ConfiguracionPage() {
@@ -63,6 +63,34 @@ export default async function ConfiguracionPage() {
               <p className="text-gray-400 text-xs font-medium mb-1">Moneda</p>
               <p className="text-gray-800">Soles (S/.)</p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* IGV */}
+      <Card className="border-gray-200 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+              <Receipt className="w-4 h-4 text-emerald-600" />
+            </div>
+            <CardTitle className="text-sm font-semibold text-gray-700">Impuestos</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <div className="flex items-center justify-between py-2 border-b border-gray-50">
+            <div>
+              <p className="font-medium text-gray-800">IGV</p>
+              <p className="text-gray-400 text-xs">Impuesto General a las Ventas — Perú</p>
+            </div>
+            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 text-sm font-bold px-3">18%</Badge>
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium text-gray-800">Aplicación</p>
+              <p className="text-gray-400 text-xs">Se aplica automáticamente en cotizaciones</p>
+            </div>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-700">Activo</Badge>
           </div>
         </CardContent>
       </Card>

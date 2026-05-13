@@ -1,12 +1,15 @@
 export type UserRole = 'admin' | 'vendedor'
 
-export type LeadSource = 'whatsapp' | 'instagram' | 'tiktok' | 'facebook' | 'web' | 'referido'
+export type LeadSource = 'whatsapp' | 'instagram' | 'tiktok' | 'facebook' | 'web' | 'referido' | 'cliente_indelar'
 
 export type ProductInterest =
   | 'roller_screen'
+  | 'roller_screen_motor'
   | 'blackout'
+  | 'blackout_motor'
   | 'duo'
   | 'pvc'
+  | 'ripplefold'
   | 'multiple'
 
 export type LeadStage =
@@ -143,9 +146,12 @@ export const STAGE_COLORS: Record<LeadStage, string> = {
 
 export const PRODUCT_LABELS: Record<ProductInterest, string> = {
   roller_screen: 'Roller Screen',
+  roller_screen_motor: 'Roller Screen Motorizado',
   blackout: 'Roller Blackout',
-  duo: 'Cortina Duo',
+  blackout_motor: 'Roller Blackout Motorizado',
+  duo: 'Roller Duo',
   pvc: 'Puerta PVC',
+  ripplefold: 'Cortina Ripplefold',
   multiple: 'Múltiples',
 }
 
@@ -156,6 +162,7 @@ export const SOURCE_LABELS: Record<LeadSource, string> = {
   facebook: 'Facebook Ads',
   web: 'Sitio Web',
   referido: 'Referido',
+  cliente_indelar: 'Cliente Indelar',
 }
 
 export const PIPELINE_STAGES: LeadStage[] = [

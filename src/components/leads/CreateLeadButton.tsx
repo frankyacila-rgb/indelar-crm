@@ -10,9 +10,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Loader2 } from 'lucide-react'
+import { Plus, Loader2, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { PRODUCT_LABELS, SOURCE_LABELS } from '@/types'
+import { PRODUCT_LABELS, SOURCE_LABELS, type ProductInterest } from '@/types'
 
 export function CreateLeadButton() {
   const [open, setOpen] = useState(false)
@@ -25,18 +25,24 @@ export function CreateLeadButton() {
     phone: '',
     email: '',
     source: '',
-    product_interest: '',
     estimated_value: '',
     district: '',
   })
+  const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
 
   function handleChange(field: string, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
+  function toggleProduct(p: ProductInterest) {
+    setSelectedProducts(prev =>
+      prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]
+    )
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.full_name || !form.phone || !form.source || !form.product_interest) {
+    if (!form.full_name || !form.phone || !form.source || selectedProducts.length === 0) {
       toast.error('Completa los campos requeridos')
       return
     }
@@ -44,9 +50,13 @@ export function CreateLeadButton() {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Generar código correlativo
     const { count } = await supabase.from('leads').select('*', { count: 'exact', head: true })
     const code = `IND-${String((count ?? 0) + 1).padStart(4, '0')}`
+
+    const product_interest = selectedProducts.length === 1 ? selectedProducts[0] : 'multiple'
+    const product_notes = selectedProducts.length > 1
+      ? selectedProducts.map(p => PRODUCT_LABELS[p]).join(', ')
+      : null
 
     const { error } = await supabase.from('leads').insert({
       code,
@@ -54,7 +64,8 @@ export function CreateLeadButton() {
       phone: form.phone,
       email: form.email || null,
       source: form.source,
-      product_interest: form.product_interest,
+      product_interest,
+      address: product_notes,
       estimated_value: form.estimated_value ? parseFloat(form.estimated_value) : null,
       district: form.district || null,
       stage: 'nuevo',
@@ -70,7 +81,8 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', product_interest: '', estimated_value: '', district: '' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '' })
+    setSelectedProducts([])
     router.refresh()
   }
 
@@ -128,18 +140,31 @@ export function CreateLeadButton() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
-                <Label>Producto *</Label>
-                <Select value={form.product_interest} onValueChange={(v) => v && handleChange('product_interest', v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(PRODUCT_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
+              <div className="col-span-2 space-y-1.5">
+                <Label>Producto(s) *</Label>
+                <div className="grid grid-cols-2 gap-1.5 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  {(Object.entries(PRODUCT_LABELS) as [ProductInterest, string][])
+                    .filter(([k]) => k !== 'multiple')
+                    .map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => toggleProduct(value)}
+                        className={`text-left text-xs px-2.5 py-1.5 rounded-md border transition-all font-medium ${
+                          selectedProducts.includes(value)
+                            ? 'bg-orange-500 text-white border-orange-500'
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-orange-300'
+                        }`}
+                      >
+                        {label}
+                      </button>
                     ))}
-                  </SelectContent>
-                </Select>
+                </div>
+                {selectedProducts.length > 1 && (
+                  <p className="text-xs text-orange-600 font-medium">
+                    {selectedProducts.length} productos seleccionados
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label>Valor estimado (S/.)</Label>
