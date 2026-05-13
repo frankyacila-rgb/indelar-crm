@@ -93,20 +93,45 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <CardTitle className="text-sm font-semibold text-gray-700">Información del lead</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-start">
                 <span className="text-gray-500">Producto</span>
-                <span className="font-medium">{PRODUCT_LABELS[lead.product_interest as ProductInterest]}</span>
+                <span className="font-medium text-right max-w-[55%]">
+                  {lead.product_interest === 'multiple' && lead.address
+                    ? <span className="text-xs leading-relaxed">{lead.address}</span>
+                    : PRODUCT_LABELS[lead.product_interest as ProductInterest]}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Servicio</span>
+                <span className="font-medium">
+                  {lead.service_type === 'solo_entrega' ? 'Solo Entrega' : 'Entrega + Instalación'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Origen</span>
                 <span className="font-medium">{SOURCE_LABELS[lead.source as LeadSource]}</span>
               </div>
-              {lead.estimated_value && (
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Valor estimado</span>
-                  <span className="font-medium text-emerald-600">S/. {lead.estimated_value.toLocaleString('es-PE')}</span>
-                </div>
-              )}
+              {lead.estimated_value && (() => {
+                const total = lead.estimated_value
+                const base = Math.round((total / 1.18) * 100) / 100
+                const igv = Math.round((total - base) * 100) / 100
+                return (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Subtotal</span>
+                      <span className="font-medium">S/. {base.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">IGV (18%)</span>
+                      <span className="font-medium">S/. {igv.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-gray-100 pt-2">
+                      <span className="text-gray-700 font-semibold">Total</span>
+                      <span className="font-bold text-emerald-600">S/. {total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  </>
+                )
+              })()}
               <div className="flex justify-between">
                 <span className="text-gray-500">Creado</span>
                 <span className="font-medium">{format(new Date(lead.created_at), 'dd/MM/yyyy', { locale: es })}</span>

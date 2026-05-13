@@ -117,7 +117,11 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-gray-600">{PRODUCT_LABELS[lead.product_interest as ProductInterest]}</span>
+                    <span className="text-sm text-gray-600">
+                      {lead.product_interest === 'multiple' && lead.address
+                        ? <span className="text-xs leading-relaxed">{lead.address}</span>
+                        : PRODUCT_LABELS[lead.product_interest as ProductInterest]}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-gray-600">{SOURCE_LABELS[lead.source]}</span>

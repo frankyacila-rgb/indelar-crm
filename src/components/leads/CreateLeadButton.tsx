@@ -44,9 +44,9 @@ export function CreateLeadButton() {
   })
   const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
 
-  const base = parseFloat(form.estimated_value) || 0
-  const igv = Math.round(base * 0.18 * 100) / 100
-  const total = Math.round((base + igv) * 100) / 100
+  const total = parseFloat(form.estimated_value) || 0
+  const base = Math.round((total / 1.18) * 100) / 100
+  const igv = Math.round((total - base) * 100) / 100
 
   function handleChange(field: string, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -222,20 +222,20 @@ export function CreateLeadButton() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label>Valor base (S/. sin IGV)</Label>
+                <Label>Valor total (S/. con IGV)</Label>
                 <Input
                   type="number"
-                  placeholder="1200"
+                  placeholder="1180"
                   value={form.estimated_value}
                   onChange={(e) => handleChange('estimated_value', e.target.value)}
                 />
               </div>
-              {base > 0 && (
+              {total > 0 && (
                 <div className="space-y-1.5">
                   <Label className="text-gray-400 text-xs">Desglose</Label>
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs space-y-1.5">
                     <div className="flex justify-between text-gray-500">
-                      <span>Subtotal</span>
+                      <span>Subtotal (sin IGV)</span>
                       <span>S/. {base.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between text-gray-500">
