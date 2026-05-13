@@ -8,17 +8,17 @@ export default async function PipelinePage() {
   const { data } = await supabase
     .from('leads')
     .select('*')
-    .not('stage', 'in', '(ganado,perdido)')
     .order('created_at', { ascending: false })
 
   const leads: Lead[] = data ?? []
+  const activos = leads.filter(l => !['ganado', 'perdido'].includes(l.stage)).length
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Pipeline</h1>
         <p className="text-sm text-gray-500 mt-1">
-          {leads.length} leads activos — arrastra para cambiar de etapa
+          {activos} leads activos · {leads.length} en total — arrastra para cambiar de etapa
         </p>
       </div>
       <PipelineBoard initialLeads={leads} />
