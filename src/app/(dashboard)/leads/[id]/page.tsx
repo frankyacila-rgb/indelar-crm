@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { DeleteLeadButton } from '@/components/leads/DeleteLeadButton'
+import { SaleDetailsForm } from '@/components/leads/SaleDetailsForm'
 
 const ACTIVITY_ICONS = {
   note: StickyNote,
@@ -28,15 +29,17 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const { id } = await params
   const supabase = await createClient()
 
-  const [leadRes, activitiesRes] = await Promise.all([
+  const [leadRes, activitiesRes, saleRes] = await Promise.all([
     supabase.from('leads').select('*').eq('id', id).single(),
     supabase.from('activities').select('*, profile:profiles(full_name)').eq('lead_id', id).order('created_at', { ascending: false }),
+    supabase.from('sale_details').select('*').eq('lead_id', id).maybeSingle(),
   ])
 
   if (!leadRes.data) notFound()
 
   const lead = leadRes.data
   const activities = activitiesRes.data ?? []
+  const saleDetail = saleRes.data ?? null
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -148,6 +151,28 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <LeadStageSelect leadId={lead.id} currentStage={lead.stage} />
             </CardContent>
           </Card>
+
+          {/* Datos de venta — solo si está ganado */}
+          {lead.stage === 'ganado' && (
+            <Card className="border-emerald-200 shadow-sm bg-emerald-50/30">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold text-emerald-700">Datos de venta</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SaleDetailsForm
+                  leadId={lead.id}
+                  initial={saleDetail}
+                  defaultValues={{
+                    full_name: lead.full_name,
+                    phone: lead.phone,
+                    district: lead.district ?? '',
+                    source: lead.source,
+                    product_interest: lead.product_interest,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Columna derecha: timeline */}
