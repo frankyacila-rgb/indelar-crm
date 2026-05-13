@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Users, TrendingUp, CheckSquare, DollarSign, AlertCircle, ArrowRight, ArrowUpRight } from 'lucide-react'
+import { Users, TrendingUp, CheckSquare, DollarSign, ArrowRight, ArrowUpRight } from 'lucide-react'
 import { STAGE_LABELS, STAGE_COLORS, PRODUCT_LABELS, SOURCE_LABELS, type Lead } from '@/types'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { CreateLeadButton } from '@/components/leads/CreateLeadButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -75,11 +76,14 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-400 font-medium">{saludo},</p>
           <h1 className="text-2xl font-bold text-gray-900 capitalize">{nombreUsuario} 👋</h1>
         </div>
-        <div className="text-right hidden sm:block">
-          <p className="text-xs text-gray-400">
-            {new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </p>
-          <p className="text-xs text-gray-400 mt-0.5">{tasks.length} tareas pendientes hoy</p>
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden sm:block">
+            <p className="text-xs text-gray-400">
+              {new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">{tasks.length} tareas pendientes hoy</p>
+          </div>
+          <CreateLeadButton />
         </div>
       </div>
 
