@@ -40,8 +40,13 @@ export function CreateLeadButton() {
     source: '',
     estimated_value: '',
     district: '',
+    service_type: 'entrega_instalacion',
   })
   const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
+
+  const base = parseFloat(form.estimated_value) || 0
+  const igv = Math.round(base * 0.18 * 100) / 100
+  const total = Math.round((base + igv) * 100) / 100
 
   function handleChange(field: string, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -79,8 +84,9 @@ export function CreateLeadButton() {
       source: form.source,
       product_interest,
       address: product_notes,
-      estimated_value: form.estimated_value ? parseFloat(form.estimated_value) : null,
+      estimated_value: form.estimated_value ? total : null,
       district: form.district || null,
+      service_type: form.service_type,
       stage: 'nuevo',
       assigned_to: user?.id,
     })
@@ -95,7 +101,7 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion' })
     setSelectedProducts([])
     router.refresh()
   }
@@ -193,8 +199,30 @@ export function CreateLeadButton() {
                   </p>
                 )}
               </div>
+              <div className="col-span-2 space-y-1.5">
+                <Label>Tipo de servicio</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: 'entrega_instalacion', label: 'Entrega + Instalación' },
+                    { value: 'solo_entrega', label: 'Solo Entrega' },
+                  ].map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => handleChange('service_type', opt.value)}
+                      className={`text-sm px-3 py-2 rounded-lg border font-medium transition-all ${
+                        form.service_type === opt.value
+                          ? 'bg-orange-500 text-white border-orange-500'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-orange-300'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="space-y-1.5">
-                <Label>Valor estimado (S/.)</Label>
+                <Label>Valor base (S/. sin IGV)</Label>
                 <Input
                   type="number"
                   placeholder="1200"
@@ -202,6 +230,25 @@ export function CreateLeadButton() {
                   onChange={(e) => handleChange('estimated_value', e.target.value)}
                 />
               </div>
+              {base > 0 && (
+                <div className="space-y-1.5">
+                  <Label className="text-gray-400 text-xs">Desglose</Label>
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs space-y-1.5">
+                    <div className="flex justify-between text-gray-500">
+                      <span>Subtotal</span>
+                      <span>S/. {base.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-500">
+                      <span>IGV (18%)</span>
+                      <span>S/. {igv.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-gray-800 border-t border-gray-200 pt-1.5">
+                      <span>Total</span>
+                      <span>S/. {total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
