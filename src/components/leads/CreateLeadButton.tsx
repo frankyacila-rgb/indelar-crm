@@ -42,6 +42,7 @@ export function CreateLeadButton() {
     district: '',
     service_type: 'entrega_instalacion',
     quote_number: '',
+    dni_ruc: '',
   })
   const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
 
@@ -89,6 +90,7 @@ export function CreateLeadButton() {
       district: form.district || null,
       service_type: form.service_type,
       quote_number: form.quote_number || null,
+      dni_ruc: form.dni_ruc || null,
       stage: 'nuevo',
       assigned_to: user?.id,
     })
@@ -103,7 +105,7 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion', quote_number: '' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion', quote_number: '', dni_ruc: '' })
     setSelectedProducts([])
     router.refresh()
   }
@@ -146,6 +148,14 @@ export function CreateLeadButton() {
                   value={form.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>DNI / RUC</Label>
+                <Input
+                  placeholder="12345678"
+                  value={form.dni_ruc}
+                  onChange={(e) => handleChange('dni_ruc', e.target.value)}
                 />
               </div>
               <div className="space-y-1.5">

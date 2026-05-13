@@ -65,6 +65,7 @@ export interface Lead {
   district?: string
   quote_number?: string
   service_type?: string
+  dni_ruc?: string
   lost_reason?: string
   last_contact_at?: string
   created_at: string
