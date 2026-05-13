@@ -7,12 +7,12 @@ import type { Lead } from '@/types'
 
 export default async function LeadsPage() {
   const supabase = await createClient()
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from('leads')
-    .select('*, profile:profiles(full_name, avatar_url)', { count: 'exact' })
+    .select('*')
     .order('created_at', { ascending: false })
 
-  console.log('leads data:', data?.length, 'error:', error, 'count:', count)
+  console.log('leads error:', error, 'count:', data?.length)
 
   const leads: Lead[] = data ?? []
 
