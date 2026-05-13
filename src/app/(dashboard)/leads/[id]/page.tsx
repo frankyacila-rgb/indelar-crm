@@ -12,6 +12,7 @@ import {
   FileText, PhoneCall, MessageSquare, StickyNote, Repeat, ArrowLeft,
 } from 'lucide-react'
 import Link from 'next/link'
+import { DeleteLeadButton } from '@/components/leads/DeleteLeadButton'
 
 const ACTIVITY_ICONS = {
   note: StickyNote,
@@ -79,6 +80,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           >
             <MessageCircle className="w-4 h-4" /> WhatsApp
           </a>
+          <DeleteLeadButton leadId={lead.id} leadName={lead.full_name} />
         </div>
       </div>
 
