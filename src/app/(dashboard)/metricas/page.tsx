@@ -39,12 +39,21 @@ export default async function MetricasPage() {
     value: all.filter(l => l.source === key).length,
   })).filter(d => d.value > 0)
 
-  // Datos por producto
-  const productData = Object.entries(PRODUCT_LABELS).map(([key, label]) => ({
-    name: label,
-    total: all.filter(l => l.product_interest === key).length,
-    ganados: all.filter(l => l.product_interest === key && l.stage === 'ganado').length,
-  })).filter(d => d.total > 0)
+  // Datos por producto — expande leads con múltiples productos
+  const productCount: Record<string, { total: number; ganados: number }> = {}
+  for (const lead of all) {
+    const products: string[] = lead.product_interest === 'multiple' && lead.address
+      ? lead.address.split(', ')
+      : [PRODUCT_LABELS[lead.product_interest as keyof typeof PRODUCT_LABELS] ?? lead.product_interest]
+    for (const p of products) {
+      if (!productCount[p]) productCount[p] = { total: 0, ganados: 0 }
+      productCount[p].total++
+      if (lead.stage === 'ganado') productCount[p].ganados++
+    }
+  }
+  const productData = Object.entries(productCount)
+    .map(([name, d]) => ({ name, ...d }))
+    .sort((a, b) => b.total - a.total)
 
   const kpis = [
     {
