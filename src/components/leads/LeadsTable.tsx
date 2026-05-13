@@ -99,7 +99,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                   <TableCell>
                     <Link href={`/leads/${lead.id}`} className="block">
                       <p className="text-sm font-medium text-gray-900">{lead.full_name}</p>
-                      <p className="text-xs text-gray-400">{lead.code}</p>
+                      <p className="text-xs text-gray-400">{lead.quote_number || lead.code}</p>
                     </Link>
                   </TableCell>
                   <TableCell>

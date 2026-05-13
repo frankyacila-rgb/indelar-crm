@@ -41,6 +41,7 @@ export function CreateLeadButton() {
     estimated_value: '',
     district: '',
     service_type: 'entrega_instalacion',
+    quote_number: '',
   })
   const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
 
@@ -87,6 +88,7 @@ export function CreateLeadButton() {
       estimated_value: form.estimated_value ? total : null,
       district: form.district || null,
       service_type: form.service_type,
+      quote_number: form.quote_number || null,
       stage: 'nuevo',
       assigned_to: user?.id,
     })
@@ -101,7 +103,7 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion', quote_number: '' })
     setSelectedProducts([])
     router.refresh()
   }
@@ -120,13 +122,21 @@ export function CreateLeadButton() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2 space-y-1.5">
+              <div className="space-y-1.5">
                 <Label>Nombre completo *</Label>
                 <Input
                   placeholder="María García"
                   value={form.full_name}
                   onChange={(e) => handleChange('full_name', e.target.value)}
                   required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Nro. de Cotización</Label>
+                <Input
+                  placeholder="COT-2026-001"
+                  value={form.quote_number}
+                  onChange={(e) => handleChange('quote_number', e.target.value)}
                 />
               </div>
               <div className="space-y-1.5">

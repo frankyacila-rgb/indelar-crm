@@ -58,7 +58,7 @@ export function LeadCard({ lead, isDragging = false }: LeadCardProps) {
 
       {/* Código y producto */}
       <p className="text-xs text-gray-400 mb-2">
-        {lead.code} · {PRODUCT_LABELS[lead.product_interest]}
+        {lead.quote_number || lead.code} · {PRODUCT_LABELS[lead.product_interest]}
       </p>
 
       {/* Footer: valor + acciones */}

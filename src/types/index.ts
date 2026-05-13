@@ -63,6 +63,8 @@ export interface Lead {
   estimated_value?: number
   address?: string
   district?: string
+  quote_number?: string
+  service_type?: string
   lost_reason?: string
   last_contact_at?: string
   created_at: string

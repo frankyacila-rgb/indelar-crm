@@ -53,7 +53,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-gray-900">{lead.full_name}</h1>
-            <span className="text-sm text-gray-400 font-mono">{lead.code}</span>
+            <span className="text-sm text-gray-400 font-mono">{lead.quote_number || lead.code}</span>
             <Badge className={`text-xs ${STAGE_COLORS[lead.stage as LeadStage]}`} variant="secondary">
               {STAGE_LABELS[lead.stage as LeadStage]}
             </Badge>
