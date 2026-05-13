@@ -3,7 +3,7 @@ import { FunnelChart } from '@/components/metricas/FunnelChart'
 import { SourceChart } from '@/components/metricas/SourceChart'
 import { ProductChart } from '@/components/metricas/ProductChart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, Target, DollarSign, BarChart2 } from 'lucide-react'
+import { TrendingUp, Target, DollarSign, BarChart2, Download } from 'lucide-react'
 import { STAGE_LABELS, PRODUCT_LABELS, SOURCE_LABELS, PIPELINE_STAGES } from '@/types'
 
 export default async function MetricasPage() {
@@ -92,9 +92,19 @@ export default async function MetricasPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Métricas</h1>
-        <p className="text-sm text-gray-500 mt-1">Análisis del pipeline comercial</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Métricas</h1>
+          <p className="text-sm text-gray-500 mt-1">Análisis del pipeline comercial</p>
+        </div>
+        <a
+          href="/api/export/ventas"
+          download
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Exportar ventas (.xlsx)
+        </a>
       </div>
 
       {/* KPIs */}
