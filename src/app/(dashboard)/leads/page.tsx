@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { createClient } from '@/lib/supabase/server'
 import { LeadsTable } from '@/components/leads/LeadsTable'
 import { CreateLeadButton } from '@/components/leads/CreateLeadButton'
@@ -5,10 +7,12 @@ import type { Lead } from '@/types'
 
 export default async function LeadsPage() {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data, error, count } = await supabase
     .from('leads')
-    .select('*, profile:profiles(full_name, avatar_url)')
+    .select('*, profile:profiles(full_name, avatar_url)', { count: 'exact' })
     .order('created_at', { ascending: false })
+
+  console.log('leads data:', data?.length, 'error:', error, 'count:', count)
 
   const leads: Lead[] = data ?? []
 
