@@ -10,9 +10,22 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Loader2, X } from 'lucide-react'
+import { Plus, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PRODUCT_LABELS, SOURCE_LABELS, type ProductInterest } from '@/types'
+
+const DISTRITOS_LIMA = [
+  'Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos',
+  'Cieneguilla','Comas','El Agustino','Independencia','Jesús María',
+  'La Molina','La Victoria','Lince','Los Olivos','Lurigancho','Lurín',
+  'Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre',
+  'Puente Piedra','Punta Hermosa','Punta Negra','Rímac','San Bartolo',
+  'San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores',
+  'San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar',
+  'Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador',
+  'Villa María del Triunfo','Callao','Bellavista','Carmen de la Legua',
+  'La Perla','La Punta','Mi Perú','Ventanilla',
+]
 
 export function CreateLeadButton() {
   const [open, setOpen] = useState(false)
@@ -75,7 +88,8 @@ export function CreateLeadButton() {
     setLoading(false)
 
     if (error) {
-      toast.error('Error al crear el lead')
+      console.error('Insert error:', error)
+      toast.error(`Error: ${error.message}`)
       return
     }
 
@@ -94,7 +108,7 @@ export function CreateLeadButton() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nuevo Lead</DialogTitle>
           </DialogHeader>
@@ -140,6 +154,19 @@ export function CreateLeadButton() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-1.5">
+                <Label>Distrito</Label>
+                <Select value={form.district} onValueChange={(v) => v && handleChange('district', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {DISTRITOS_LIMA.map(d => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="col-span-2 space-y-1.5">
                 <Label>Producto(s) *</Label>
                 <div className="grid grid-cols-2 gap-1.5 p-3 border border-gray-200 rounded-lg bg-gray-50">
@@ -173,14 +200,6 @@ export function CreateLeadButton() {
                   placeholder="1200"
                   value={form.estimated_value}
                   onChange={(e) => handleChange('estimated_value', e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Distrito</Label>
-                <Input
-                  placeholder="Miraflores"
-                  value={form.district}
-                  onChange={(e) => handleChange('district', e.target.value)}
                 />
               </div>
             </div>
