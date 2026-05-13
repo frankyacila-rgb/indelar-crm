@@ -1,0 +1,27 @@
+import { createClient } from '@/lib/supabase/server'
+import { LeadsTable } from '@/components/leads/LeadsTable'
+import { CreateLeadButton } from '@/components/leads/CreateLeadButton'
+import type { Lead } from '@/types'
+
+export default async function LeadsPage() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('leads')
+    .select('*, profile:profiles(full_name, avatar_url)')
+    .order('created_at', { ascending: false })
+
+  const leads: Lead[] = data ?? []
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Leads</h1>
+          <p className="text-sm text-gray-500 mt-1">{leads.length} leads en total</p>
+        </div>
+        <CreateLeadButton />
+      </div>
+      <LeadsTable leads={leads} />
+    </div>
+  )
+}
