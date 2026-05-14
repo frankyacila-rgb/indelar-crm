@@ -12,6 +12,7 @@ import {
   BarChart2,
   Settings,
   LogOut,
+  CalendarDays,
 } from 'lucide-react'
 import { logout } from '@/lib/supabase/actions'
 import { Button } from '@/components/ui/button'
@@ -22,6 +23,7 @@ const navItems = [
   { href: '/pipeline', label: 'Pipeline', icon: Kanban },
   { href: '/leads', label: 'Leads', icon: Users },
   { href: '/tareas', label: 'Tareas', icon: CheckSquare },
+  { href: '/calendario', label: 'Calendario', icon: CalendarDays },
   { href: '/cotizaciones', label: 'Cotizaciones', icon: FileText },
   { href: '/metricas', label: 'Métricas', icon: BarChart2 },
 ]

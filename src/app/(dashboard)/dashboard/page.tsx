@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Users, TrendingUp, CheckSquare, DollarSign, ArrowRight, ArrowUpRight } from 'lucide-react'
+import { Users, TrendingUp, CheckSquare, DollarSign, ArrowRight, ArrowUpRight, CalendarDays } from 'lucide-react'
 import { STAGE_LABELS, STAGE_COLORS, PRODUCT_LABELS, SOURCE_LABELS, type Lead } from '@/types'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
@@ -11,14 +11,17 @@ import { CreateLeadButton } from '@/components/leads/CreateLeadButton'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const [leadsRes, tasksRes, { data: { user } }] = await Promise.all([
+  const todayStr = new Date().toISOString().split('T')[0]
+  const [leadsRes, tasksRes, eventsRes, { data: { user } }] = await Promise.all([
     supabase.from('leads').select('*').order('created_at', { ascending: false }),
     supabase.from('tasks').select('*, lead:leads(code, full_name)').eq('status', 'pending').order('due_date', { ascending: true }).limit(5),
+    supabase.from('calendar_events').select('*, lead:leads(full_name, quote_number, code)').gte('event_date', todayStr).order('event_date').order('event_time').limit(5),
     supabase.auth.getUser(),
   ])
 
   const leads: Lead[] = leadsRes.data ?? []
   const tasks = tasksRes.data ?? []
+  const upcomingEvents = eventsRes.data ?? []
 
   const totalLeads = leads.length
   const ganados = leads.filter(l => l.stage === 'ganado').length
@@ -204,6 +207,46 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Próximos eventos */}
+      <Card className="border-gray-200 shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between pb-3 pt-5 px-5">
+          <div className="flex items-center gap-2">
+            <CalendarDays className="w-4 h-4 text-orange-500" />
+            <CardTitle className="text-sm font-semibold text-gray-700">Próximos eventos</CardTitle>
+          </div>
+          <Link href="/calendario" className="inline-flex items-center gap-1 text-xs text-orange-500 hover:text-orange-600 font-medium">
+            Ver todos <ArrowRight className="w-3 h-3" />
+          </Link>
+        </CardHeader>
+        <CardContent className="px-0 pb-2">
+          {upcomingEvents.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-8">Sin eventos próximos</p>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {upcomingEvents.map((ev) => {
+                const TYPE_COLORS: Record<string, string> = { visita: 'bg-blue-100 text-blue-700', instalacion: 'bg-emerald-100 text-emerald-700', entrega: 'bg-orange-100 text-orange-700', recojo: 'bg-violet-100 text-violet-700' }
+                const TYPE_LABELS: Record<string, string> = { visita: 'Visita', instalacion: 'Instalación', entrega: 'Entrega', recojo: 'Recojo' }
+                return (
+                  <div key={ev.id} className="flex items-center justify-between px-5 py-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className={`text-xs px-2 py-0.5 rounded font-semibold flex-shrink-0 ${TYPE_COLORS[ev.type]}`}>{TYPE_LABELS[ev.type]}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-800 truncate">{ev.title}</p>
+                        {ev.lead && <p className="text-xs text-gray-400 truncate">{ev.lead.quote_number || ev.lead.code} · {ev.lead.full_name}</p>}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500 flex-shrink-0 ml-3 text-right">
+                      <p className="font-medium">{new Date(ev.event_date + 'T12:00:00').toLocaleDateString('es-PE', { day: 'numeric', month: 'short' })}</p>
+                      {ev.event_time && <p className="text-gray-400">{ev.event_time.slice(0, 5)}</p>}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
