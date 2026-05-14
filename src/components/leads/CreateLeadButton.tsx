@@ -14,27 +14,77 @@ import { Plus, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PRODUCT_LABELS, SOURCE_LABELS, type ProductInterest } from '@/types'
 
-const CIUDADES_PERU = [
-  'Lima','Arequipa','Trujillo','Chiclayo','Piura','Iquitos','Cusco','Chimbote',
-  'Huancayo','Tacna','Juliaca','Ica','Pucallpa','Sullana','Ayacucho','Chincha Alta',
-  'Cajamarca','Puno','Huánuco','Tarapoto','Tumbes','Moquegua','Pasco','Abancay',
+const DISTRITOS_POR_CIUDAD: Record<string, string[]> = {
+  'Lima': [
+    'Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos',
+    'Cieneguilla','Comas','El Agustino','Independencia','Jesús María',
+    'La Molina','La Victoria','Lince','Los Olivos','Lurigancho','Lurín',
+    'Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre',
+    'Puente Piedra','Punta Hermosa','Punta Negra','Rímac','San Bartolo',
+    'San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores',
+    'San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar',
+    'Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador',
+    'Villa María del Triunfo','Callao','Bellavista','Carmen de la Legua',
+    'La Perla','La Punta','Mi Perú','Ventanilla',
+  ],
+  'Arequipa': [
+    'Arequipa','Alto Selva Alegre','Cayma','Cerro Colorado','Characato',
+    'Chiguata','Hunter','Jacobo Hunter','José Luis Bustamante y Rivero',
+    'La Joya','Mariano Melgar','Miraflores','Mollebaya','Paucarpata',
+    'Pocsi','Polobaya','Quequeña','Sabandía','Sachaca','San Juan de Siguas',
+    'San Juan de Tarucani','Santa Isabel de Siguas','Santa Rita de Siguas',
+    'Socabaya','Tiabaya','Uchumayo','Vitor','Yanahuara','Yarabamba','Yura',
+  ],
+  'Trujillo': [
+    'Trujillo','El Porvenir','Florencia de Mora','Huanchaco','La Esperanza',
+    'Laredo','Moche','Molino','Poroto','Salaverry','Simbal','Victor Larco Herrera',
+  ],
+  'Chiclayo': [
+    'Chiclayo','Chongoyape','Eten','Eten Puerto','José Leonardo Ortiz',
+    'La Victoria','Lagunas','Monsefú','Nueva Arica','Oyotún','Picsi',
+    'Pimentel','Reque','Santa Rosa','Saña','Tumán',
+  ],
+  'Piura': [
+    'Piura','Castilla','Catacaos','Cura Mori','El Tallan','La Arena',
+    'La Unión','Las Lomas','Tambo Grande','Veintiséis de Octubre',
+  ],
+  'Cusco': [
+    'Cusco','Ccorca','Poroy','San Jerónimo','San Sebastián','Santiago',
+    'Saylla','Wanchaq',
+  ],
+  'Huancayo': [
+    'Huancayo','Carhuacallanga','Chacapampa','Chicche','Chilca','Chongos Alto',
+    'Chupuro','Colca','Cullhuas','El Tambo','Huacrapuquio','Hualhuas',
+    'Huancan','Huasicancha','Huayucachi','Ingenio','Pariahuanca','Pucará',
+    'Quilcas','San Agustín','San Jerónimo de Tunan','Saño','Sapallanga','Sicaya',
+  ],
+  'Tacna': [
+    'Tacna','Alto de la Alianza','Calana','Ciudad Nueva','Inclán','Pachia',
+    'Palca','Pocollay','Sama','Coronel Gregorio Albarracín Lanchipa',
+  ],
+  'Ica': [
+    'Ica','La Tinguiña','Los Aquijes','Ocucaje','Pachacutec','Parcona',
+    'Pueblo Nuevo','Salas','San José de Los Molinos','San Juan Bautista',
+    'Santiago','Subtanjalla','Tate','Yauca del Rosario',
+  ],
+  'Cajamarca': [
+    'Cajamarca','Asunción','Chetilla','Cospan','Encañada','Jesús',
+    'Llacanora','Los Baños del Inca','Magdalena','Matara','Namora','San Juan',
+  ],
+  'Ayacucho': [
+    'Ayacucho','Acocro','Acos Vinchos','Carmen Alto','Chiara','Ocros',
+    'Pacaycasa','Quinua','San José de Ticllas','San Juan Bautista',
+    'Santiago de Pischa','Socos','Tambillo','Vinchos',
+  ],
+}
+
+const CIUDADES_PERU = Object.keys(DISTRITOS_POR_CIUDAD).concat(
+  ['Iquitos','Chimbote','Juliaca','Pucallpa','Sullana','Chincha Alta',
+  'Puno','Huánuco','Tarapoto','Tumbes','Moquegua','Pasco','Abancay',
   'Huaraz','Moyobamba','Puerto Maldonado','Huamachuco','Jaén','Tingo María',
   'Bagua Grande','Chachapoyas','Yurimaguas','Tarma','Huacho','Barranca',
-  'Chancay','Huaral','Cañete','Ilo','Juanjuí','Tocache','Satipo','La Oroya',
-]
-
-const DISTRITOS_LIMA = [
-  'Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos',
-  'Cieneguilla','Comas','El Agustino','Independencia','Jesús María',
-  'La Molina','La Victoria','Lince','Los Olivos','Lurigancho','Lurín',
-  'Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre',
-  'Puente Piedra','Punta Hermosa','Punta Negra','Rímac','San Bartolo',
-  'San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores',
-  'San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar',
-  'Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador',
-  'Villa María del Triunfo','Callao','Bellavista','Carmen de la Legua',
-  'La Perla','La Punta','Mi Perú','Ventanilla',
-]
+  'Chancay','Huaral','Cañete','Ilo','Juanjuí','Tocache','Satipo','La Oroya']
+).filter((v, i, a) => a.indexOf(v) === i).sort()
 
 export function CreateLeadButton() {
   const [open, setOpen] = useState(false)
@@ -193,7 +243,7 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Ciudad</Label>
-                <Select value={form.city} onValueChange={(v) => v && handleChange('city', v)}>
+                <Select value={form.city} onValueChange={(v) => { if (v) { handleChange('city', v); handleChange('district', '') } }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
@@ -206,12 +256,12 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Distrito</Label>
-                <Select value={form.district} onValueChange={(v) => v && handleChange('district', v)}>
+                <Select value={form.district} onValueChange={(v) => v && handleChange('district', v)} disabled={!DISTRITOS_POR_CIUDAD[form.city]}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar..." />
+                    <SelectValue placeholder={DISTRITOS_POR_CIUDAD[form.city] ? 'Seleccionar...' : 'No disponible'} />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
-                    {DISTRITOS_LIMA.map(d => (
+                    {(DISTRITOS_POR_CIUDAD[form.city] ?? []).map(d => (
                       <SelectItem key={d} value={d}>{d}</SelectItem>
                     ))}
                   </SelectContent>
