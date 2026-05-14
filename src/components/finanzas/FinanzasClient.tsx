@@ -59,7 +59,7 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
             <p className="text-sm font-medium text-gray-500">Total Ingresos</p>
           </div>
           <p className="text-2xl font-bold text-emerald-600">S/. {totalIngresos.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</p>
-          <p className="text-xs text-gray-400 mt-1">S/. {ingresoLeads.toLocaleString('es-PE', { minimumFractionDigits: 2 })} de leads ganados</p>
+          <p className="text-xs text-gray-400 mt-1">Ingresos registrados manualmente</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
