@@ -14,14 +14,16 @@ export default async function PipelinePage() {
   const activos = leads.filter(l => !['ganado', 'perdido'].includes(l.stage)).length
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="flex flex-col h-[calc(100vh-56px)]">
+      <div className="mb-4">
         <h1 className="text-2xl font-bold text-gray-900">Pipeline</h1>
         <p className="text-sm text-gray-500 mt-1">
           {activos} leads activos · {leads.length} en total — arrastra para cambiar de etapa
         </p>
       </div>
-      <PipelineBoard initialLeads={leads} />
+      <div className="flex-1 min-h-0">
+        <PipelineBoard initialLeads={leads} />
+      </div>
     </div>
   )
 }
