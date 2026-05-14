@@ -19,6 +19,8 @@ export default async function DashboardPage() {
     supabase.auth.getUser(),
   ])
 
+  const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user?.id ?? '').single()
+
   const leads: Lead[] = leadsRes.data ?? []
   const tasks = tasksRes.data ?? []
   const upcomingEvents = eventsRes.data ?? []
@@ -34,7 +36,7 @@ export default async function DashboardPage() {
 
   const hora = new Date().getHours()
   const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches'
-  const nombreUsuario = user?.email?.split('@')[0] ?? 'equipo'
+  const nombreUsuario = profile?.full_name || user?.email?.split('@')[0] || 'equipo'
 
   const stats = [
     {
