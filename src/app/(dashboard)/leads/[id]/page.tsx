@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { DeleteLeadButton } from '@/components/leads/DeleteLeadButton'
+import { EditLeadButton } from '@/components/leads/EditLeadButton'
 import { SaleDetailsForm } from '@/components/leads/SaleDetailsForm'
 
 const ACTIVITY_ICONS = {
@@ -83,6 +84,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           >
             <MessageCircle className="w-4 h-4" /> WhatsApp
           </a>
+          <EditLeadButton lead={lead} />
           <DeleteLeadButton leadId={lead.id} leadName={lead.full_name} />
         </div>
       </div>
