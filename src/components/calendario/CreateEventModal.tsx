@@ -114,7 +114,13 @@ export function CreateEventModal({ open, onClose, leads, defaultDate, initial }:
           <div className="space-y-1.5">
             <Label>Lead relacionado</Label>
             <Select value={form.lead_id || 'none'} onValueChange={v => set('lead_id', v === 'none' ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder="Ninguno (opcional)" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue>
+                  {form.lead_id
+                    ? (() => { const l = leads.find(x => x.id === form.lead_id); return l ? `${l.quote_number ?? l.code} · ${l.full_name}` : 'Ninguno' })()
+                    : 'Ninguno (opcional)'}
+                </SelectValue>
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Ninguno</SelectItem>
                 {leads.map(l => (
