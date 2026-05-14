@@ -34,7 +34,8 @@ export default async function DashboardPage() {
 
   const recentLeads = leads.slice(0, 5)
 
-  const hora = new Date().getHours()
+  const horaPeru = new Date().toLocaleString('en-US', { timeZone: 'America/Lima', hour: 'numeric', hour12: false })
+  const hora = parseInt(horaPeru)
   const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches'
   const nombreUsuario = profile?.full_name || user?.email?.split('@')[0] || 'equipo'
 
