@@ -6,10 +6,10 @@ export const dynamic = 'force-dynamic'
 export default async function FinanzasPage() {
   const supabase = await createClient()
 
-  const { data: entries } = await supabase
-    .from('finance_entries')
-    .select('*, lead:leads(full_name, quote_number, code)')
-    .order('date', { ascending: false })
+  const [{ data: entries }, { data: leads }] = await Promise.all([
+    supabase.from('finance_entries').select('*, lead:leads(full_name, quote_number, code)').order('date', { ascending: false }),
+    supabase.from('leads').select('id, full_name, quote_number, code').order('created_at', { ascending: false }),
+  ])
 
   const allEntries = entries ?? []
 
@@ -32,6 +32,7 @@ export default async function FinanzasPage() {
         totalIngresos={totalIngresos}
         totalEgresos={totalEgresos}
         ingresoLeads={0}
+        leads={leads ?? []}
       />
     </div>
   )

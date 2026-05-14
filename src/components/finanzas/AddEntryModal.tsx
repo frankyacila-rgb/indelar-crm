@@ -14,16 +14,25 @@ import { toast } from 'sonner'
 const CATEGORIAS_EGRESO = ['Proveedor','Instalación','Transporte','Marketing','Oficina','Salarios','Servicios','Otros']
 const CATEGORIAS_INGRESO = ['Venta','Adelanto','Saldo','Otro']
 
+interface Lead {
+  id: string
+  full_name: string
+  quote_number?: string | null
+  code: string
+}
+
 interface Props {
   open: boolean
   onClose: () => void
   defaultType?: 'ingreso' | 'egreso'
+  leads?: Lead[]
 }
 
-export function AddEntryModal({ open, onClose, defaultType = 'egreso' }: Props) {
+export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [] }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
+  const [leadId, setLeadId] = useState<string>('')
   const [form, setForm] = useState({
     type: defaultType,
     category: '' as string,
@@ -50,6 +59,7 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso' }: Props) 
       description: form.description,
       amount: parseFloat(form.amount),
       date: form.date,
+      lead_id: leadId || null,
       created_by: user?.id,
     })
     setLoading(false)
@@ -94,6 +104,25 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso' }: Props) 
               </SelectContent>
             </Select>
           </div>
+
+          {leads.length > 0 && (
+            <div className="space-y-1.5">
+              <Label>Lead vinculado <span className="text-gray-400 font-normal">(opcional)</span></Label>
+              <Select value={leadId} onValueChange={(v) => setLeadId(v ?? '')}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sin lead vinculado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sin lead vinculado</SelectItem>
+                  {leads.map(l => (
+                    <SelectItem key={l.id} value={l.id}>
+                      {l.quote_number || l.code} · {l.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label>Descripción *</Label>

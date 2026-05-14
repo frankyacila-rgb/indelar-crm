@@ -20,14 +20,22 @@ interface Entry {
   lead?: { full_name: string; quote_number?: string; code: string } | null
 }
 
+interface Lead {
+  id: string
+  full_name: string
+  quote_number?: string | null
+  code: string
+}
+
 interface Props {
   entries: Entry[]
   totalIngresos: number
   totalEgresos: number
   ingresoLeads: number
+  leads: Lead[]
 }
 
-export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLeads }: Props) {
+export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLeads, leads }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [modalOpen, setModalOpen] = useState(false)
@@ -141,7 +149,7 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
       </div>
 
       {modalOpen && (
-        <AddEntryModal open={modalOpen} onClose={() => setModalOpen(false)} defaultType={defaultType} />
+        <AddEntryModal open={modalOpen} onClose={() => setModalOpen(false)} defaultType={defaultType} leads={leads} />
       )}
     </div>
   )
