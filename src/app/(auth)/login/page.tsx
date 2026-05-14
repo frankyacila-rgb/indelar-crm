@@ -40,18 +40,14 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-[#1a1a1a] flex-col items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
         <div className="relative z-10 text-center space-y-6">
-          <div className="w-20 h-20 mx-auto relative">
+          <div className="w-36 h-36 mx-auto relative">
             <Image
               src="/logo-indelar.png"
               alt="Indelar"
-              width={80}
-              height={80}
+              width={144}
+              height={144}
               className="object-contain"
             />
-          </div>
-          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight">Indelar</h1>
-            <p className="text-white/40 text-sm mt-1">Decoración de Interiores</p>
           </div>
           <div className="w-px h-12 bg-white/10 mx-auto" />
           <p className="text-white/50 text-sm max-w-xs leading-relaxed">
@@ -132,9 +128,15 @@ export default function LoginPage() {
             </CardContent>
           </Card>
 
-          <p className="text-center text-xs text-gray-400">
-            © {new Date().getFullYear()} Indelar Decoraciones — Lima, Perú
-          </p>
+          <div className="text-center space-y-1">
+            <p className="text-xs text-gray-400">© {new Date().getFullYear()} Indelar Decoraciones — Lima, Perú</p>
+            <p className="text-xs text-gray-300">
+              Powered by{' '}
+              <a href="https://www.frkstudio.pe" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-500 font-medium transition-colors">
+                FRK Studio
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
