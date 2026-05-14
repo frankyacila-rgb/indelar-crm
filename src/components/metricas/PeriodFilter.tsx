@@ -29,7 +29,7 @@ export function PeriodFilter() {
     <div className="flex items-center gap-2">
       <Select value={selectedMonth} onValueChange={v => update(v, selectedYear ?? String(currentYear))}>
         <SelectTrigger className="w-36 h-8 text-sm">
-          <SelectValue />
+          <SelectValue>{MESES[parseInt(selectedMonth) - 1]}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {MESES.map((m, i) => (
