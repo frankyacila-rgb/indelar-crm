@@ -179,7 +179,7 @@ export function CreateLeadButton() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nuevo Lead</DialogTitle>
           </DialogHeader>
@@ -243,7 +243,7 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Ciudad</Label>
-                <Select value={form.city} onValueChange={(v) => { if (v) { handleChange('city', v); handleChange('district', '') } }}>
+                <Select value={form.city} onValueChange={(v) => { if (v) setForm(p => ({ ...p, city: v, district: '' })) }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
