@@ -39,7 +39,7 @@ export default function LoginPage() {
       {/* Panel izquierdo — decorativo */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#1a1a1a] flex-col items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
-        <div className="relative z-10 text-center space-y-6">
+        <div className="relative z-10 text-center flex flex-col items-center gap-4">
           <div className="w-48 h-48 mx-auto relative">
             <Image
               src="/logo-indelar.png"
@@ -51,6 +51,14 @@ export default function LoginPage() {
           </div>
           <p className="text-white/50 text-sm max-w-xs leading-relaxed text-center">
             Gestiona tus leads, cotizaciones y equipo comercial desde un solo lugar.
+          </p>
+        </div>
+        <div className="absolute bottom-6 z-10 text-center">
+          <p className="text-xs text-white/25">
+            Powered by{' '}
+            <a href="https://www.frkstudio.pe" target="_blank" rel="noopener noreferrer" className="text-orange-400/70 hover:text-orange-400 transition-colors font-medium">
+              FRK Studio
+            </a>
           </p>
         </div>
         {/* Círculos decorativos */}

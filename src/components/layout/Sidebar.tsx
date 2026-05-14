@@ -103,6 +103,12 @@ export function Sidebar() {
             Cerrar sesión
           </Button>
         </form>
+        <p className="text-center text-[10px] text-white/15 pt-1">
+          Powered by{' '}
+          <a href="https://www.frkstudio.pe" target="_blank" rel="noopener noreferrer" className="text-orange-400/50 hover:text-orange-400/80 transition-colors">
+            FRK Studio
+          </a>
+        </p>
       </div>
     </aside>
   )
