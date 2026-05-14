@@ -39,7 +39,7 @@ export default function LoginPage() {
       {/* Panel izquierdo — decorativo */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#1a1a1a] flex-col items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
-        <div className="relative z-10 text-center flex flex-col items-center gap-4">
+        <div className="relative z-10 text-center flex flex-col items-center gap-1">
           <div className="w-48 h-48 mx-auto relative">
             <Image
               src="/logo-indelar.png"
