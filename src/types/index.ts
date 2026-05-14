@@ -11,6 +11,7 @@ export type ProductInterest =
   | 'pvc'
   | 'ripplefold'
   | 'alfombra_rollo'
+  | 'lavado_toldo'
   | 'multiple'
 
 export type LeadStage =
@@ -157,6 +158,7 @@ export const PRODUCT_LABELS: Record<ProductInterest, string> = {
   pvc: 'Puerta PVC',
   ripplefold: 'Cortina Ripplefold',
   alfombra_rollo: 'Alfombra de Rollo',
+  lavado_toldo: 'Lavado de Toldo',
   multiple: 'Múltiples',
 }
 
