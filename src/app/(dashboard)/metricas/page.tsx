@@ -73,6 +73,25 @@ export default async function MetricasPage({ searchParams }: { searchParams: Pro
     .map(([name, d]) => ({ name, ...d }))
     .sort((a, b) => b.total - a.total)
 
+  // Top ventas por monto
+  const topVentas = [...all]
+    .filter(l => l.estimated_value)
+    .sort((a, b) => (b.estimated_value ?? 0) - (a.estimated_value ?? 0))
+    .slice(0, 5)
+
+  // Ventas por distrito
+  const districtCount: Record<string, { total: number; valor: number }> = {}
+  for (const lead of all) {
+    const d = lead.district?.trim() || 'Sin distrito'
+    if (!districtCount[d]) districtCount[d] = { total: 0, valor: 0 }
+    districtCount[d].total++
+    districtCount[d].valor += lead.estimated_value ?? 0
+  }
+  const districtData = Object.entries(districtCount)
+    .map(([name, d]) => ({ name, ...d }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 8)
+
   const kpis = [
     {
       label: 'Tasa de cierre',
@@ -174,6 +193,80 @@ export default async function MetricasPage({ searchParams }: { searchParams: Pro
           </CardHeader>
           <CardContent>
             <ProductChart data={productData} />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Top ventas + Distritos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Monto más alto por venta */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Monto más alto por venta</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {topVentas.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">Sin datos</p>
+            ) : (
+              <div className="space-y-3">
+                {topVentas.map((lead, i) => {
+                  const maxVal = topVentas[0].estimated_value ?? 1
+                  const pct = Math.round(((lead.estimated_value ?? 0) / maxVal) * 100)
+                  return (
+                    <div key={lead.id} className="flex items-center gap-3">
+                      <span className="text-xs font-bold text-gray-400 w-4">{i + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-800 truncate">{lead.full_name}</span>
+                          <span className="text-sm font-bold text-emerald-600 ml-2 flex-shrink-0">
+                            S/. {(lead.estimated_value ?? 0).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                        <p className="text-xs text-gray-400 mt-0.5">{lead.district || '—'} · {lead.quote_number || lead.code}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Ventas por distrito */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Leads por distrito</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {districtData.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">Sin datos</p>
+            ) : (
+              <div className="space-y-3">
+                {districtData.map(({ name, total: count, valor }) => {
+                  const maxCount = districtData[0].total
+                  const pct = Math.round((count / maxCount) * 100)
+                  return (
+                    <div key={name} className="flex items-center gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-800 truncate">{name}</span>
+                          <div className="flex items-center gap-3 ml-2 flex-shrink-0">
+                            <span className="text-xs text-gray-400">{count} lead{count !== 1 ? 's' : ''}</span>
+                            {valor > 0 && <span className="text-xs font-semibold text-blue-600">S/. {valor.toLocaleString('es-PE')}</span>}
+                          </div>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-orange-400 rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
