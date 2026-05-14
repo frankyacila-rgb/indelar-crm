@@ -30,7 +30,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
   const [mesFilter, setMesFilter] = useState<string>('all')
   const [añoFilter, setAñoFilter] = useState<string>(String(now.getFullYear()))
 
-  const años = Array.from(new Set(leads.map(l => new Date(l.created_at).getFullYear()))).sort((a, b) => b - a)
+  const años = Array.from({ length: now.getFullYear() - 2019 }, (_, i) => now.getFullYear() - i)
 
   const filtered = leads
     .filter((lead) => {
