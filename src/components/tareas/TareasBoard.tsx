@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CheckSquare, Clock, CheckCheck, AlertCircle, Link as LinkIcon } from 'lucide-react'
+import { CheckSquare, Clock, CheckCheck, AlertCircle, Link as LinkIcon, Trash2 } from 'lucide-react'
 import { format, isPast, isToday, isTomorrow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { toast } from 'sonner'
@@ -42,7 +42,7 @@ interface Task {
   lead?: { id: string; code: string; full_name: string } | null
 }
 
-function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string, done: boolean) => void }) {
+function TaskRow({ task, onToggle, onDelete }: { task: Task; onToggle: (id: string, done: boolean) => void; onDelete: (id: string) => void }) {
   const isDone = task.status === 'done'
   const due = dueDateLabel(task.due_date)
 
@@ -93,6 +93,14 @@ function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string, done: 
         <span className={`text-xs font-medium ${due.color}`}>
           {due.label}
         </span>
+        <button
+          onClick={() => {
+            if (confirm('¿Eliminar esta tarea?')) onDelete(task.id)
+          }}
+          className="text-gray-300 hover:text-red-400 transition-colors ml-1"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   )
@@ -102,6 +110,13 @@ export function TareasBoard({ tasks: initialTasks }: { tasks: Task[] }) {
   const [tasks, setTasks] = useState(initialTasks)
   const router = useRouter()
   const supabase = createClient()
+
+  async function handleDelete(id: string) {
+    const { error } = await supabase.from('tasks').delete().eq('id', id)
+    if (error) { toast.error('Error al eliminar'); return }
+    setTasks(prev => prev.filter(t => t.id !== id))
+    toast.success('Tarea eliminada')
+  }
 
   async function handleToggle(id: string, done: boolean) {
     const newStatus = done ? 'done' : 'pending'
@@ -160,19 +175,19 @@ export function TareasBoard({ tasks: initialTasks }: { tasks: Task[] }) {
         {overdue.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-red-500 uppercase tracking-wide px-1">Vencidas</p>
-            {overdue.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} />)}
+            {overdue.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} onDelete={handleDelete} />)}
           </div>
         )}
         {today.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-amber-500 uppercase tracking-wide px-1">Hoy</p>
-            {today.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} />)}
+            {today.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} onDelete={handleDelete} />)}
           </div>
         )}
         {upcoming.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-1">Próximas</p>
-            {upcoming.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} />)}
+            {upcoming.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} onDelete={handleDelete} />)}
           </div>
         )}
         {pending.length === 0 && (
@@ -190,7 +205,7 @@ export function TareasBoard({ tasks: initialTasks }: { tasks: Task[] }) {
             <p className="text-sm">Sin tareas vencidas</p>
           </div>
         ) : (
-          overdue.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} />)
+          overdue.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} onDelete={handleDelete} />)
         )}
       </TabsContent>
 
@@ -201,7 +216,7 @@ export function TareasBoard({ tasks: initialTasks }: { tasks: Task[] }) {
             <p className="text-sm">No hay tareas completadas aún</p>
           </div>
         ) : (
-          done.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} />)
+          done.map(t => <TaskRow key={t.id} task={t} onToggle={handleToggle} onDelete={handleDelete} />)
         )}
       </TabsContent>
     </Tabs>
