@@ -14,6 +14,15 @@ import { Plus, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PRODUCT_LABELS, SOURCE_LABELS, type ProductInterest } from '@/types'
 
+const CIUDADES_PERU = [
+  'Lima','Arequipa','Trujillo','Chiclayo','Piura','Iquitos','Cusco','Chimbote',
+  'Huancayo','Tacna','Juliaca','Ica','Pucallpa','Sullana','Ayacucho','Chincha Alta',
+  'Cajamarca','Puno','Huánuco','Tarapoto','Tumbes','Moquegua','Pasco','Abancay',
+  'Huaraz','Moyobamba','Puerto Maldonado','Huamachuco','Jaén','Tingo María',
+  'Bagua Grande','Chachapoyas','Yurimaguas','Tarma','Huacho','Barranca',
+  'Chancay','Huaral','Cañete','Ilo','Juanjuí','Tocache','Satipo','La Oroya',
+]
+
 const DISTRITOS_LIMA = [
   'Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos',
   'Cieneguilla','Comas','El Agustino','Independencia','Jesús María',
@@ -40,6 +49,7 @@ export function CreateLeadButton() {
     source: '',
     estimated_value: '',
     district: '',
+    city: 'Lima',
     service_type: 'entrega_instalacion',
     quote_number: '',
     dni_ruc: '',
@@ -88,6 +98,7 @@ export function CreateLeadButton() {
       address: product_notes,
       estimated_value: form.estimated_value ? total : null,
       district: form.district || null,
+      city: form.city || null,
       service_type: form.service_type,
       quote_number: form.quote_number || null,
       dni_ruc: form.dni_ruc || null,
@@ -105,7 +116,7 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', service_type: 'entrega_instalacion', quote_number: '', dni_ruc: '' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', city: 'Lima', service_type: 'entrega_instalacion', quote_number: '', dni_ruc: '' })
     setSelectedProducts([])
     router.refresh()
   }
@@ -176,6 +187,19 @@ export function CreateLeadButton() {
                   <SelectContent>
                     {Object.entries(SOURCE_LABELS).map(([value, label]) => (
                       <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Ciudad</Label>
+                <Select value={form.city} onValueChange={(v) => v && handleChange('city', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {CIUDADES_PERU.map(c => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
