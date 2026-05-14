@@ -20,20 +20,32 @@ interface LeadsTableProps {
   leads: Lead[]
 }
 
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
 export function LeadsTable({ leads }: LeadsTableProps) {
+  const now = new Date()
   const [search, setSearch] = useState('')
   const [stageFilter, setStageFilter] = useState<string>('all')
   const [productFilter, setProductFilter] = useState<string>('all')
+  const [mesFilter, setMesFilter] = useState<string>('all')
+  const [añoFilter, setAñoFilter] = useState<string>(String(now.getFullYear()))
 
-  const filtered = leads.filter((lead) => {
-    const matchSearch =
-      lead.full_name.toLowerCase().includes(search.toLowerCase()) ||
-      lead.phone.includes(search) ||
-      lead.code.toLowerCase().includes(search.toLowerCase())
-    const matchStage = stageFilter === 'all' || lead.stage === stageFilter
-    const matchProduct = productFilter === 'all' || lead.product_interest === productFilter
-    return matchSearch && matchStage && matchProduct
-  })
+  const años = Array.from(new Set(leads.map(l => new Date(l.created_at).getFullYear()))).sort((a, b) => b - a)
+
+  const filtered = leads
+    .filter((lead) => {
+      const fecha = new Date(lead.created_at)
+      const matchSearch =
+        lead.full_name.toLowerCase().includes(search.toLowerCase()) ||
+        lead.phone.includes(search) ||
+        lead.code.toLowerCase().includes(search.toLowerCase())
+      const matchStage = stageFilter === 'all' || lead.stage === stageFilter
+      const matchProduct = productFilter === 'all' || lead.product_interest === productFilter
+      const matchAño = añoFilter === 'all' || fecha.getFullYear() === parseInt(añoFilter)
+      const matchMes = mesFilter === 'all' || fecha.getMonth() === parseInt(mesFilter)
+      return matchSearch && matchStage && matchProduct && matchAño && matchMes
+    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
   return (
     <div className="space-y-4">
@@ -48,6 +60,22 @@ export function LeadsTable({ leads }: LeadsTableProps) {
             className="pl-9"
           />
         </div>
+        <select
+          value={añoFilter}
+          onChange={(e) => setAñoFilter(e.target.value)}
+          className="h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+        >
+          <option value="all">Todos los años</option>
+          {años.map(a => <option key={a} value={String(a)}>{a}</option>)}
+        </select>
+        <select
+          value={mesFilter}
+          onChange={(e) => setMesFilter(e.target.value)}
+          className="h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+        >
+          <option value="all">Todos los meses</option>
+          {MESES.map((m, i) => <option key={i} value={String(i)}>{m}</option>)}
+        </select>
         <Select value={stageFilter} onValueChange={(v) => v && setStageFilter(v)}>
           <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Etapa" />
