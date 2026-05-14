@@ -261,29 +261,25 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Ciudad</Label>
-                <Select value={form.city} onValueChange={(v) => { if (v) preserveScroll(() => setForm(p => ({ ...p, city: v, district: '' }))) }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar..." />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {CIUDADES_PERU.map(c => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  value={form.city}
+                  onChange={(e) => setForm(p => ({ ...p, city: e.target.value, district: '' }))}
+                  className="w-full h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                >
+                  {CIUDADES_PERU.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
               <div className="space-y-1.5">
                 <Label>Distrito</Label>
-                <Select value={form.district} onValueChange={(v) => v && preserveScroll(() => handleChange('district', v))} disabled={!DISTRITOS_POR_CIUDAD[form.city]}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={DISTRITOS_POR_CIUDAD[form.city] ? 'Seleccionar...' : 'No disponible'} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {(DISTRITOS_POR_CIUDAD[form.city] ?? []).map(d => (
-                      <SelectItem key={d} value={d}>{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  value={form.district}
+                  onChange={(e) => handleChange('district', e.target.value)}
+                  disabled={!DISTRITOS_POR_CIUDAD[form.city]}
+                  className="w-full h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 disabled:opacity-50"
+                >
+                  <option value="">{DISTRITOS_POR_CIUDAD[form.city] ? 'Seleccionar...' : 'No disponible'}</option>
+                  {(DISTRITOS_POR_CIUDAD[form.city] ?? []).map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
               </div>
               <div className="col-span-2 space-y-1.5">
                 <Label>Producto(s) *</Label>
