@@ -39,7 +39,7 @@ export function ProfileForm({ profile, userEmail }: ProfileFormProps) {
       .eq('id', profile?.id)
     setLoading(false)
     if (error) {
-      toast.error('Error al guardar')
+      toast.error('Error: ' + error.message)
       return
     }
     toast.success('Perfil actualizado')
