@@ -85,7 +85,7 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
             <p className="text-xs text-gray-400">
-              {new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })}
+              {new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Lima' })}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">{tasks.length} tareas pendientes hoy</p>
           </div>
