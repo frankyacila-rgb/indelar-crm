@@ -188,7 +188,16 @@ export function CreateLeadButton() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
-          <div ref={scrollRef} className="overflow-y-auto max-h-[90vh] p-6">
+          <div
+            ref={scrollRef}
+            className="overflow-y-auto max-h-[90vh] p-6"
+            onFocus={() => {
+              const el = scrollRef.current
+              if (!el) return
+              const top = el.scrollTop
+              requestAnimationFrame(() => { el.scrollTop = top })
+            }}
+          >
           <DialogHeader>
             <DialogTitle>Nuevo Lead</DialogTitle>
           </DialogHeader>
