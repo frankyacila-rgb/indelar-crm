@@ -110,7 +110,11 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [
               <Label>Lead vinculado <span className="text-gray-400 font-normal">(opcional)</span></Label>
               <Select value={leadId} onValueChange={(v) => setLeadId(v ?? '')}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sin lead vinculado" />
+                  <SelectValue placeholder="Sin lead vinculado">
+                    {leadId
+                      ? (() => { const l = leads.find(x => x.id === leadId); return l ? `${l.quote_number || l.code} · ${l.full_name}` : '' })()
+                      : 'Sin lead vinculado'}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Sin lead vinculado</SelectItem>

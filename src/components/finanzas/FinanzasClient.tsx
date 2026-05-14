@@ -136,8 +136,8 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
                   <span className={`text-sm font-bold ${e.type === 'ingreso' ? 'text-emerald-600' : 'text-red-500'}`}>
                     {e.type === 'ingreso' ? '+' : '-'} S/. {e.amount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                   </span>
-                  {!e.lead_id && (
-                    <button onClick={() => handleDelete(e.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                  {(
+                    <button onClick={() => { if (confirm('¿Eliminar este movimiento?')) handleDelete(e.id) }} className="text-gray-300 hover:text-red-400 transition-colors">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   )}
