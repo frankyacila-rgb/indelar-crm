@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -89,6 +89,14 @@ const CIUDADES_PERU = Object.keys(DISTRITOS_POR_CIUDAD).concat(
 export function CreateLeadButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const preserveScroll = useCallback((fn: () => void) => {
+    const el = scrollRef.current
+    const top = el?.scrollTop ?? 0
+    fn()
+    requestAnimationFrame(() => { if (el) el.scrollTop = top })
+  }, [])
   const router = useRouter()
   const supabase = createClient()
 
@@ -179,7 +187,8 @@ export function CreateLeadButton() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
+          <div ref={scrollRef} className="overflow-y-auto max-h-[90vh] p-6">
           <DialogHeader>
             <DialogTitle>Nuevo Lead</DialogTitle>
           </DialogHeader>
@@ -243,7 +252,7 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Ciudad</Label>
-                <Select value={form.city} onValueChange={(v) => { if (v) setForm(p => ({ ...p, city: v, district: '' })) }}>
+                <Select value={form.city} onValueChange={(v) => { if (v) preserveScroll(() => setForm(p => ({ ...p, city: v, district: '' }))) }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
@@ -256,7 +265,7 @@ export function CreateLeadButton() {
               </div>
               <div className="space-y-1.5">
                 <Label>Distrito</Label>
-                <Select value={form.district} onValueChange={(v) => v && handleChange('district', v)} disabled={!DISTRITOS_POR_CIUDAD[form.city]}>
+                <Select value={form.district} onValueChange={(v) => v && preserveScroll(() => handleChange('district', v))} disabled={!DISTRITOS_POR_CIUDAD[form.city]}>
                   <SelectTrigger>
                     <SelectValue placeholder={DISTRITOS_POR_CIUDAD[form.city] ? 'Seleccionar...' : 'No disponible'} />
                   </SelectTrigger>
@@ -353,6 +362,7 @@ export function CreateLeadButton() {
               </Button>
             </DialogFooter>
           </form>
+          </div>
         </DialogContent>
       </Dialog>
     </>
