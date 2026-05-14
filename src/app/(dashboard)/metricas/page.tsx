@@ -5,11 +5,29 @@ import { ProductChart } from '@/components/metricas/ProductChart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, Target, DollarSign, BarChart2, Download } from 'lucide-react'
 import { STAGE_LABELS, PRODUCT_LABELS, SOURCE_LABELS, PIPELINE_STAGES } from '@/types'
+import { PeriodFilter } from '@/components/metricas/PeriodFilter'
+import { Suspense } from 'react'
 
-export default async function MetricasPage() {
+const MESES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
+export default async function MetricasPage({ searchParams }: { searchParams: Promise<{ mes?: string; año?: string }> }) {
   const supabase = await createClient()
+  const params = await searchParams
 
-  const { data: leads } = await supabase.from('leads').select('*')
+  const now = new Date()
+  const mes = parseInt(params.mes ?? String(now.getMonth() + 1))
+  const año = parseInt(params.año ?? String(now.getFullYear()))
+
+  const mesStr = String(mes).padStart(2, '0')
+  const fechaInicio = `${año}-${mesStr}-01`
+  const fechaFin = `${año}-${mesStr}-31`
+
+  const { data: leads } = await supabase
+    .from('leads')
+    .select('*')
+    .gte('created_at', fechaInicio)
+    .lte('created_at', fechaFin + 'T23:59:59')
+
   const all = leads ?? []
 
   // KPIs generales
@@ -95,16 +113,19 @@ export default async function MetricasPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Métricas</h1>
-          <p className="text-sm text-gray-500 mt-1">Análisis del pipeline comercial</p>
+          <p className="text-sm text-gray-500 mt-1">{MESES[mes]} {año} · {all.length} leads</p>
         </div>
-        <a
-          href="/api/export/ventas"
-          download
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors"
-        >
-          <Download className="w-4 h-4" />
-          Exportar ventas (.xlsx)
-        </a>
+        <div className="flex items-center gap-3">
+          <Suspense><PeriodFilter /></Suspense>
+          <a
+            href="/api/export/ventas"
+            download
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Exportar ventas (.xlsx)
+          </a>
+        </div>
       </div>
 
       {/* KPIs */}
