@@ -40,17 +40,16 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-[#1a1a1a] flex-col items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
         <div className="relative z-10 text-center space-y-6">
-          <div className="w-36 h-36 mx-auto relative">
+          <div className="w-48 h-48 mx-auto relative">
             <Image
               src="/logo-indelar.png"
               alt="Indelar"
-              width={144}
-              height={144}
+              width={192}
+              height={192}
               className="object-contain"
             />
           </div>
-          <div className="w-px h-12 bg-white/10 mx-auto" />
-          <p className="text-white/50 text-sm max-w-xs leading-relaxed">
+          <p className="text-white/50 text-sm max-w-xs leading-relaxed text-center">
             Gestiona tus leads, cotizaciones y equipo comercial desde un solo lugar.
           </p>
         </div>
