@@ -179,7 +179,7 @@ export function CreateLeadButton() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Nuevo Lead</DialogTitle>
           </DialogHeader>
@@ -247,7 +247,7 @@ export function CreateLeadButton() {
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
-                  <SelectContent position="popper" className="max-h-60">
+                  <SelectContent className="max-h-60">
                     {CIUDADES_PERU.map(c => (
                       <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
@@ -260,7 +260,7 @@ export function CreateLeadButton() {
                   <SelectTrigger>
                     <SelectValue placeholder={DISTRITOS_POR_CIUDAD[form.city] ? 'Seleccionar...' : 'No disponible'} />
                   </SelectTrigger>
-                  <SelectContent position="popper" className="max-h-60">
+                  <SelectContent className="max-h-60">
                     {(DISTRITOS_POR_CIUDAD[form.city] ?? []).map(d => (
                       <SelectItem key={d} value={d}>{d}</SelectItem>
                     ))}
