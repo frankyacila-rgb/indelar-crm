@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'vendedor'
 
-export type LeadSource = 'whatsapp' | 'instagram' | 'tiktok' | 'facebook' | 'web' | 'referido' | 'cliente_indelar'
+export type LeadSource = 'whatsapp' | 'instagram' | 'tiktok' | 'facebook' | 'web' | 'referido' | 'cliente_indelar' | 'cliente_corp_indelar'
 
 export type ProductInterest =
   | 'roller_screen'
@@ -176,6 +176,7 @@ export const SOURCE_LABELS: Record<LeadSource, string> = {
   web: 'Sitio Web',
   referido: 'Referido',
   cliente_indelar: 'Cliente Indelar',
+  cliente_corp_indelar: 'Cliente Corp. Indelar',
 }
 
 export const PIPELINE_STAGES: LeadStage[] = [
