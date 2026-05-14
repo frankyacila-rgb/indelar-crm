@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   CalendarDays,
+  Wallet,
 } from 'lucide-react'
 import { logout } from '@/lib/supabase/actions'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ const navItems = [
   { href: '/tareas', label: 'Tareas', icon: CheckSquare },
   { href: '/calendario', label: 'Calendario', icon: CalendarDays },
   { href: '/cotizaciones', label: 'Cotizaciones', icon: FileText },
+  { href: '/finanzas', label: 'Finanzas', icon: Wallet },
   { href: '/metricas', label: 'Métricas', icon: BarChart2 },
 ]
 
