@@ -27,7 +27,7 @@ export function PipelineColumn({ stage, leads }: PipelineColumnProps) {
   const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value ?? 0), 0)
 
   return (
-    <div className="flex-shrink-0 w-64 flex flex-col h-full">
+    <div className="flex-shrink-0 w-64">
       {/* Header de la columna */}
       <div className={`flex items-center justify-between px-3 py-2.5 rounded-t-xl ${colors.header}`}>
         <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ export function PipelineColumn({ stage, leads }: PipelineColumnProps) {
       {/* Zona droppable */}
       <div
         ref={setNodeRef}
-        className={`flex-1 overflow-y-auto rounded-b-xl p-2 space-y-2 transition-colors ${
+        className={`min-h-40 rounded-b-xl p-2 space-y-2 transition-colors ${
           isOver ? 'bg-blue-50 ring-2 ring-blue-300 ring-inset' : 'bg-gray-100/60'
         }`}
       >
