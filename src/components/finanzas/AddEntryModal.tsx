@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 
 const CATEGORIAS_EGRESO = ['Proveedor','Instalación','Transporte','Marketing','Oficina','Salarios','Servicios','Otros']
 const CATEGORIAS_INGRESO = ['Venta','Adelanto','Saldo','Otro']
+const CUENTAS = ['Cuenta Corp. Indelar', 'Cuenta Corp Indelar Ahorro', 'Efectivo']
 
 interface Lead {
   id: string
@@ -21,24 +22,38 @@ interface Lead {
   code: string
 }
 
+interface Entry {
+  id: string
+  type: 'ingreso' | 'egreso'
+  category: string | null
+  description: string
+  amount: number
+  date: string
+  lead_id: string | null
+  account: string | null
+}
+
 interface Props {
   open: boolean
   onClose: () => void
   defaultType?: 'ingreso' | 'egreso'
   leads?: Lead[]
+  entry?: Entry | null
 }
 
-export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [] }: Props) {
+export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [], entry = null }: Props) {
   const router = useRouter()
   const supabase = createClient()
+  const isEdit = !!entry
   const [loading, setLoading] = useState(false)
-  const [leadId, setLeadId] = useState<string>('')
+  const [leadId, setLeadId] = useState<string>(entry?.lead_id ?? '')
   const [form, setForm] = useState({
-    type: defaultType,
-    category: '' as string,
-    description: '',
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
+    type: (entry?.type ?? defaultType) as 'ingreso' | 'egreso',
+    category: entry?.category ?? '' as string,
+    description: entry?.description ?? '',
+    amount: entry?.amount ? String(entry.amount) : '',
+    date: entry?.date ?? new Date().toISOString().split('T')[0],
+    account: entry?.account ?? '',
   })
 
   function set(field: string, value: string) {
@@ -53,18 +68,26 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [
     }
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.from('finance_entries').insert({
+    const payload = {
       type: form.type,
       category: form.category || null,
       description: form.description,
       amount: parseFloat(form.amount),
       date: form.date,
       lead_id: leadId || null,
-      created_by: user?.id,
-    })
+      account: form.account || null,
+    }
+
+    let error
+    if (isEdit) {
+      ;({ error } = await supabase.from('finance_entries').update(payload).eq('id', entry!.id))
+    } else {
+      ;({ error } = await supabase.from('finance_entries').insert({ ...payload, created_by: user?.id }))
+    }
+
     setLoading(false)
     if (error) { toast.error('Error: ' + error.message); return }
-    toast.success(form.type === 'ingreso' ? 'Ingreso registrado' : 'Egreso registrado')
+    toast.success(isEdit ? 'Movimiento actualizado' : (form.type === 'ingreso' ? 'Ingreso registrado' : 'Egreso registrado'))
     onClose()
     router.refresh()
   }
@@ -75,7 +98,7 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Nuevo movimiento</DialogTitle>
+          <DialogTitle>{isEdit ? 'Editar movimiento' : 'Nuevo movimiento'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-1">
           <div className="grid grid-cols-2 gap-2">
@@ -101,6 +124,16 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [
               <SelectTrigger><SelectValue placeholder="Seleccionar..." /></SelectTrigger>
               <SelectContent>
                 {categorias.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Cuenta *</Label>
+            <Select value={form.account} onValueChange={(v) => set('account', v ?? '')}>
+              <SelectTrigger><SelectValue placeholder="Seleccionar cuenta..." /></SelectTrigger>
+              <SelectContent>
+                {CUENTAS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -149,7 +182,7 @@ export function AddEntryModal({ open, onClose, defaultType = 'egreso', leads = [
             <Button type="submit" disabled={loading}
               className={form.type === 'ingreso' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-red-500 hover:bg-red-600'}
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Registrar'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEdit ? 'Guardar cambios' : 'Registrar'}
             </Button>
           </DialogFooter>
         </form>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash2, TrendingUp, TrendingDown, Scale } from 'lucide-react'
+import { Plus, Trash2, TrendingUp, TrendingDown, Scale, Pencil } from 'lucide-react'
 import { AddEntryModal } from './AddEntryModal'
 import { toast } from 'sonner'
 import Link from 'next/link'
@@ -17,6 +17,7 @@ interface Entry {
   amount: number
   date: string
   lead_id: string | null
+  account: string | null
   lead?: { full_name: string; quote_number?: string; code: string } | null
 }
 
@@ -40,6 +41,7 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
   const supabase = createClient()
   const [modalOpen, setModalOpen] = useState(false)
   const [defaultType, setDefaultType] = useState<'ingreso' | 'egreso'>('egreso')
+  const [editEntry, setEditEntry] = useState<Entry | null>(null)
 
   const balance = totalIngresos - totalEgresos
 
@@ -50,8 +52,14 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
     router.refresh()
   }
 
-  function openModal(type: 'ingreso' | 'egreso') {
+  function openCreate(type: 'ingreso' | 'egreso') {
+    setEditEntry(null)
     setDefaultType(type)
+    setModalOpen(true)
+  }
+
+  function openEdit(entry: Entry) {
+    setEditEntry(entry)
     setModalOpen(true)
   }
 
@@ -97,10 +105,10 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
 
       {/* Acciones */}
       <div className="flex items-center gap-2">
-        <Button onClick={() => openModal('ingreso')} className="bg-emerald-500 hover:bg-emerald-600 h-8 text-xs">
+        <Button onClick={() => openCreate('ingreso')} className="bg-emerald-500 hover:bg-emerald-600 h-8 text-xs">
           <Plus className="w-3.5 h-3.5 mr-1" /> Ingreso manual
         </Button>
-        <Button onClick={() => openModal('egreso')} className="bg-red-500 hover:bg-red-600 h-8 text-xs">
+        <Button onClick={() => openCreate('egreso')} className="bg-red-500 hover:bg-red-600 h-8 text-xs">
           <Plus className="w-3.5 h-3.5 mr-1" /> Egreso
         </Button>
       </div>
@@ -120,8 +128,9 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
                   <div className={`w-2 h-8 rounded-full flex-shrink-0 ${e.type === 'ingreso' ? 'bg-emerald-400' : 'bg-red-400'}`} />
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{e.description}</p>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <div className="flex items-center gap-2 text-xs text-gray-400 flex-wrap">
                       {e.category && <span className="bg-gray-100 px-1.5 py-0.5 rounded">{e.category}</span>}
+                      {e.account && <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{e.account}</span>}
                       <span>{new Date(e.date + 'T12:00:00').toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                       {e.lead && (
                         <Link href={`/leads/${e.lead_id}`} className="text-blue-500 hover:underline truncate">
@@ -132,15 +141,16 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                <div className="flex items-center gap-2 ml-3 flex-shrink-0">
                   <span className={`text-sm font-bold ${e.type === 'ingreso' ? 'text-emerald-600' : 'text-red-500'}`}>
                     {e.type === 'ingreso' ? '+' : '-'} S/. {e.amount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                   </span>
-                  {(
-                    <button onClick={() => { if (confirm('¿Eliminar este movimiento?')) handleDelete(e.id) }} className="text-gray-300 hover:text-red-400 transition-colors">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button onClick={() => openEdit(e)} className="text-gray-300 hover:text-blue-400 transition-colors">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => { if (confirm('¿Eliminar este movimiento?')) handleDelete(e.id) }} className="text-gray-300 hover:text-red-400 transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -149,7 +159,13 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
       </div>
 
       {modalOpen && (
-        <AddEntryModal open={modalOpen} onClose={() => setModalOpen(false)} defaultType={defaultType} leads={leads} />
+        <AddEntryModal
+          open={modalOpen}
+          onClose={() => { setModalOpen(false); setEditEntry(null) }}
+          defaultType={defaultType}
+          leads={leads}
+          entry={editEntry}
+        />
       )}
     </div>
   )
