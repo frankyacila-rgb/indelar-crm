@@ -111,6 +111,7 @@ export function CreateLeadButton() {
     service_type: 'entrega_instalacion',
     quote_number: '',
     dni_ruc: '',
+    sale_date: '',
   })
   const [selectedProducts, setSelectedProducts] = useState<ProductInterest[]>([])
 
@@ -160,6 +161,7 @@ export function CreateLeadButton() {
       service_type: form.service_type,
       quote_number: form.quote_number || null,
       dni_ruc: form.dni_ruc || null,
+      sale_date: form.sale_date || null,
       stage: 'nuevo',
       assigned_to: user?.id,
     })
@@ -174,7 +176,7 @@ export function CreateLeadButton() {
 
     toast.success(`Lead ${code} creado correctamente`)
     setOpen(false)
-    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', city: 'Lima', service_type: 'entrega_instalacion', quote_number: '', dni_ruc: '' })
+    setForm({ full_name: '', phone: '', email: '', source: '', estimated_value: '', district: '', city: 'Lima', service_type: 'entrega_instalacion', quote_number: '', dni_ruc: '', sale_date: '' })
     setSelectedProducts([])
     router.refresh()
   }
@@ -218,6 +220,14 @@ export function CreateLeadButton() {
                   placeholder="COT-2026-001"
                   value={form.quote_number}
                   onChange={(e) => handleChange('quote_number', e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Fecha de venta</Label>
+                <Input
+                  type="date"
+                  value={form.sale_date}
+                  onChange={(e) => handleChange('sale_date', e.target.value)}
                 />
               </div>
               <div className="space-y-1.5">
