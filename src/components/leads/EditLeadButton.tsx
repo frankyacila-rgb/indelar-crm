@@ -59,6 +59,7 @@ interface Lead {
   dni_ruc?: string | null
   service_type?: string | null
   address?: string | null
+  sale_date?: string | null
 }
 
 interface Props {
@@ -82,6 +83,7 @@ export function EditLeadButton({ lead }: Props) {
     quote_number: lead.quote_number ?? '',
     dni_ruc: lead.dni_ruc ?? '',
     service_type: lead.service_type ?? 'entrega_instalacion',
+    sale_date: lead.sale_date ?? '',
   })
 
   function set(field: string, value: string) {
@@ -107,6 +109,7 @@ export function EditLeadButton({ lead }: Props) {
       quote_number: form.quote_number || null,
       dni_ruc: form.dni_ruc || null,
       service_type: form.service_type,
+      sale_date: form.sale_date || null,
     }).eq('id', lead.id)
     setLoading(false)
     if (error) { toast.error('Error al guardar: ' + error.message); return }
@@ -215,6 +218,10 @@ export function EditLeadButton({ lead }: Props) {
                       </button>
                     ))}
                   </div>
+                </div>
+                <div className="col-span-2 space-y-1.5">
+                  <Label>Fecha de venta</Label>
+                  <Input type="date" value={form.sale_date} onChange={e => set('sale_date', e.target.value)} />
                 </div>
               </div>
 
