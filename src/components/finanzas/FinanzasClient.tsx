@@ -36,6 +36,44 @@ interface Props {
   leads: Lead[]
 }
 
+function EntryRow({ e, onEdit, onDelete }: {
+  e: Entry
+  onEdit: (e: Entry) => void
+  onDelete: (id: string) => void
+}) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className={`w-1.5 h-7 rounded-full flex-shrink-0 ${e.type === 'ingreso' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-gray-800 truncate">{e.description}</p>
+          <div className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap mt-0.5">
+            {e.category && <span className="bg-gray-100 px-1.5 py-0.5 rounded">{e.category}</span>}
+            {e.account && <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{e.account}</span>}
+            <span>{new Date(e.date + 'T12:00:00').toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            {e.lead && (
+              <Link href={`/leads/${e.lead_id}`} className="text-blue-500 hover:underline truncate">
+                {e.lead.quote_number || e.lead.code} · {e.lead.full_name}
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+        <span className={`text-sm font-bold ${e.type === 'ingreso' ? 'text-emerald-600' : 'text-red-500'}`}>
+          {e.type === 'ingreso' ? '+' : '-'} S/. {e.amount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+        </span>
+        <button onClick={() => onEdit(e)} className="text-gray-300 hover:text-blue-400 transition-colors">
+          <Pencil className="w-3.5 h-3.5" />
+        </button>
+        <button onClick={() => { if (confirm('¿Eliminar este movimiento?')) onDelete(e.id) }} className="text-gray-300 hover:text-red-400 transition-colors">
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLeads, leads }: Props) {
   const router = useRouter()
   const supabase = createClient()
@@ -113,49 +151,45 @@ export function FinanzasClient({ entries, totalIngresos, totalEgresos, ingresoLe
         </Button>
       </div>
 
-      {/* Tabla de movimientos */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700">Movimientos</h3>
-        </div>
-        {entries.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-12">Sin movimientos registrados</p>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {entries.map(e => (
-              <div key={e.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-2 h-8 rounded-full flex-shrink-0 ${e.type === 'ingreso' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{e.description}</p>
-                    <div className="flex items-center gap-2 text-xs text-gray-400 flex-wrap">
-                      {e.category && <span className="bg-gray-100 px-1.5 py-0.5 rounded">{e.category}</span>}
-                      {e.account && <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{e.account}</span>}
-                      <span>{new Date(e.date + 'T12:00:00').toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                      {e.lead && (
-                        <Link href={`/leads/${e.lead_id}`} className="text-blue-500 hover:underline truncate">
-                          {e.lead.quote_number || e.lead.code} · {e.lead.full_name}
-                        </Link>
-                      )}
-                      {e.lead_id && !e.lead && <span className="text-orange-500">Lead ganado</span>}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-                  <span className={`text-sm font-bold ${e.type === 'ingreso' ? 'text-emerald-600' : 'text-red-500'}`}>
-                    {e.type === 'ingreso' ? '+' : '-'} S/. {e.amount.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
-                  </span>
-                  <button onClick={() => openEdit(e)} className="text-gray-300 hover:text-blue-400 transition-colors">
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={() => { if (confirm('¿Eliminar este movimiento?')) handleDelete(e.id) }} className="text-gray-300 hover:text-red-400 transition-colors">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
+      {/* Movimientos en dos columnas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Columna Ingresos */}
+        <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-emerald-100 bg-emerald-50/50 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-emerald-700">↑ Ingresos</h3>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+              {entries.filter(e => e.type === 'ingreso').length}
+            </span>
           </div>
-        )}
+          {entries.filter(e => e.type === 'ingreso').length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-10">Sin ingresos registrados</p>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {entries.filter(e => e.type === 'ingreso').map(e => (
+                <EntryRow key={e.id} e={e} onEdit={openEdit} onDelete={handleDelete} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Columna Egresos */}
+        <div className="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-red-100 bg-red-50/50 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-red-600">↓ Egresos</h3>
+            <span className="text-xs font-bold text-red-500 bg-red-100 px-2 py-0.5 rounded-full">
+              {entries.filter(e => e.type === 'egreso').length}
+            </span>
+          </div>
+          {entries.filter(e => e.type === 'egreso').length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-10">Sin egresos registrados</p>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {entries.filter(e => e.type === 'egreso').map(e => (
+                <EntryRow key={e.id} e={e} onEdit={openEdit} onDelete={handleDelete} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {modalOpen && (
