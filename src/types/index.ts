@@ -15,6 +15,7 @@ export type ProductInterest =
   | 'lavado_rollers'
   | 'lavado_estores'
   | 'mantenimiento_estores'
+  | 'tratamiento_ignifugo'
   | 'multiple'
 
 export type LeadStage =
@@ -165,6 +166,7 @@ export const PRODUCT_LABELS: Record<ProductInterest, string> = {
   lavado_rollers: 'Lavado y Mantenimiento de Rollers',
   lavado_estores: 'Lavado y Mantenimiento de Estores',
   mantenimiento_estores: 'Mantenimiento de Estores',
+  tratamiento_ignifugo: 'Tratamiento Ignífugo',
   multiple: 'Múltiples',
 }
 
