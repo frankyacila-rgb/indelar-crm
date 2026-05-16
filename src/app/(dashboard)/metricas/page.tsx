@@ -81,7 +81,7 @@ export default async function MetricasPage({ searchParams }: { searchParams: Pro
 
   // Ventas por distrito
   const districtCount: Record<string, { total: number; valor: number }> = {}
-  for (const lead of all) {
+  for (const lead of all.filter(l => l.stage === 'ganado')) {
     const d = lead.district?.trim() || 'Sin distrito'
     if (!districtCount[d]) districtCount[d] = { total: 0, valor: 0 }
     districtCount[d].total++
