@@ -75,7 +75,7 @@ export default async function MetricasPage({ searchParams }: { searchParams: Pro
 
   // Top ventas por monto
   const topVentas = [...all]
-    .filter(l => l.estimated_value)
+    .filter(l => l.stage === 'ganado' && l.estimated_value)
     .sort((a, b) => (b.estimated_value ?? 0) - (a.estimated_value ?? 0))
     .slice(0, 5)
 
