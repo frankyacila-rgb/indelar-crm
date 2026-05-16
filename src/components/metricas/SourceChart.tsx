@@ -55,7 +55,7 @@ export function SourceChart({ data }: { data: SourceData[] }) {
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip />} wrapperStyle={{ transition: 'none' }} />
         <Legend
           iconType="circle"
           iconSize={8}
