@@ -220,7 +220,7 @@ export function EditLeadButton({ lead }: Props) {
                   </div>
                 </div>
                 <div className="col-span-2 space-y-1.5">
-                  <Label>Fecha de venta</Label>
+                  <Label>Fecha</Label>
                   <Input type="date" value={form.sale_date} onChange={e => set('sale_date', e.target.value)} />
                 </div>
               </div>

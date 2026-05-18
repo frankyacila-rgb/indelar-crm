@@ -223,7 +223,7 @@ export function CreateLeadButton() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>Fecha de venta</Label>
+                <Label>Fecha</Label>
                 <Input
                   type="date"
                   value={form.sale_date}
